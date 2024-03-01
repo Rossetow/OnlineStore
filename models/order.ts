@@ -36,3 +36,21 @@ export const update = (order: Order, callback: Function) => {
         }
     )
 }
+
+export const findOne = (orderId: number) => {
+    const queryString = `
+    SELECT 
+        o.*,
+        p.*,
+        c.name AS costumer_name,
+        c.email
+    FROM Order AS o
+    INNER JOIN Custumer AS c 
+    ON c.id = o.costumer_id
+
+    INNER JOIN Products AS p
+    ON p.id = o.product_id
+
+        WHERE o.order_id = ?
+    `
+}
