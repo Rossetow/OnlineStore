@@ -2,6 +2,8 @@ import { BasicOrder, Order, OrderWithDetails } from "../types/order";
 import { db } from "../dist/db";
 import { OkPacket, RowDataPacket } from "mysql2"
 import { callbackify } from "util";
+import { error } from "console";
+import { off } from "process";
 
 export const create = (order: BasicOrder, callback: Function) => {
     const queryString = 'INSERT INTO tOrder (product_id, customer_id, product_quantity) VALUES (?, ?, ?)'
@@ -126,4 +128,16 @@ export const findAll = (callback: Function) => {
             callback(null, orders)
         }
     )
+}
+
+export const deleteOrder = (orderId: number, callback: Function) => {
+    const queryString = `DELETE FROM Order WHERE orderId=?`
+
+    db.query(queryString, [orderId], (error, result)=>{
+        if(error) {
+            callback(error)
+        } else {
+            callback(null)
+        }
+    })
 }
