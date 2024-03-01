@@ -1,6 +1,7 @@
 import { BasicOrder, Order, OrderWithDetails } from "../types/order";
 import { db } from "../dist/db";
 import { OkPacket, RowDataPacket } from "mysql2"
+import { callbackify } from "util";
 
 export const create = (order: BasicOrder, callback: Function) => {
     const queryString = 'INSERT INTO tOrder (product_id, customer_id, product_quantity) VALUES (?, ?, ?)'
@@ -32,12 +33,12 @@ export const update = (order: Order, callback: Function) => {
             order.orderId
         ],
         (err, result) => {
-            if(err) { callback(err) }
+            if (err) { callback(err) }
         }
     )
 }
 
-export const findOne = (orderId: number) => {
+export const findOne = (orderId: number, callback: Function) => {
     const queryString = `
     SELECT 
         o.*,
@@ -53,4 +54,29 @@ export const findOne = (orderId: number) => {
 
         WHERE o.order_id = ?
     `
+
+    db.query(
+        queryString, orderId, (err, result) => {
+            if (err) { callback(err) }
+
+            const row = (<RowDataPacket>result)[0]
+            const order: OrderWithDetails = {
+                orderId: row.order_id,
+                costumer: {
+                    id: row.costumer_id,
+                    name: row.costumer_name,
+                    email: row.email,
+                },
+                product: {
+                    id: row.product_id,
+                    name: row.name,
+                    description: row.description,
+                    inStock: row.inStock,
+                    price: row.price
+                },
+                quantity: row.product_quantity
+            }
+            callback(null, order)
+        }
+    )
 }

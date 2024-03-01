@@ -14,6 +14,6 @@ export interface Order extends BasicOrder{
 }
 
 export interface OrderWithDetails extends Order {
-    product: BasicProduct;
-    costumer: BasicCostumer;
+    product: Product;
+    costumer: Costumer;
 }

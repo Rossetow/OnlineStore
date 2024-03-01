@@ -4,6 +4,6 @@ export interface BasicCostumer{
 
 export interface Costumer extends BasicCostumer{
     name: string;
-    email: string;
-    password: string;
+    email?: string;
+    password?: string;
 }
