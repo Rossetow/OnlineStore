@@ -80,3 +80,50 @@ export const findOne = (orderId: number, callback: Function) => {
         }
     )
 }
+
+export const findAll = (callback: Function) => {
+    const queryString = `
+    SELECT 
+        o.*,
+        p.*,
+        c.name AS costumer_name,
+        c.email
+    FROM Order AS o
+    INNER JOIN Custumer AS c 
+    ON c.id = o.costumer_id
+
+    INNER JOIN Products AS p
+    ON p.id = o.product_id
+    `
+
+    db.query(
+        queryString, (err, result) => {
+            if (err) { callback(err) }
+
+            const rows = <RowDataPacket[]>result
+            const orders: Order[] = []
+
+            rows.forEach(row => {
+                const order: OrderWithDetails = {
+                    orderId: row.order_id,
+                    costumer: {
+                        id: row.costumer_id,
+                        name: row.costumer_name,
+                        email: row.email,
+                    },
+                    product: {
+                        id: row.product_id,
+                        name: row.name,
+                        description: row.description,
+                        inStock: row.inStock,
+                        price: row.price
+                    },
+                    quantity: row.product_quantity
+                }
+                orders.push(order)
+            }
+            )
+            callback(null, orders)
+        }
+    )
+}
