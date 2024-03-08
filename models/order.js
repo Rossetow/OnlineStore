@@ -78,11 +78,11 @@ const findAll = (callback) => {
         p.*,
         c.name AS costumer_name,
         c.email
-    FROM Order AS o
-    INNER JOIN Custumer AS c 
+    FROM ProductOrder AS o
+    INNER JOIN Costumer AS c 
     ON c.id = o.costumer_id
 
-    INNER JOIN Products AS p
+    INNER JOIN Product AS p
     ON p.id = o.product_id
     `;
     db_1.db.query(queryString, (err, result) => {
